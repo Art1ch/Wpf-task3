@@ -2,9 +2,9 @@
 
 namespace TestApp.Application.Abstractions;
 
-public interface IExporter
+public interface IUserExporter
 {
-    public string FormatName { get; set; }
+    public string ExporterName { get; set; }
     public string FileExtension { get; set; }
     void Export(IEnumerable<UserExportModel> users, string filePath);
 }

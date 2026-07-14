@@ -1,0 +1,49 @@
+﻿using System.Xml;
+using TestApp.Application.Abstractions;
+using TestApp.Core.Models;
+
+namespace TestApp.Infrastructure.Exporters;
+
+internal sealed class XmlExporter : IUserExporter
+{
+    public string ExporterName { get; set; } = "Xml exporter";
+    public string FileExtension { get; set; } = ".xml";
+
+    public void Export(IEnumerable<UserExportModel> users, string filePath)
+    {
+        if (users == null || !users.Any())
+            throw new ArgumentException("Not data for export");
+
+        var settings = new XmlWriterSettings
+        {
+            Indent = true,
+            IndentChars = "  ",
+            Encoding = System.Text.Encoding.UTF8,
+            OmitXmlDeclaration = false
+        };
+
+        using var writer = XmlWriter.Create(filePath, settings);
+
+        writer.WriteStartDocument();
+        writer.WriteStartElement("Users");
+
+        foreach (var user in users)
+        {
+            writer.WriteStartElement("Record");
+
+            writer.WriteAttributeString("id", user.Id.ToString());
+
+            writer.WriteElementString("Date", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            writer.WriteElementString("FirstName", user.FirstName ?? string.Empty);
+            writer.WriteElementString("LastName", user.LastName ?? string.Empty);
+            writer.WriteElementString("MiddleName", user.MiddleName ?? string.Empty);
+            writer.WriteElementString("City", user.City ?? string.Empty);
+            writer.WriteElementString("Country", user.Country ?? string.Empty);
+
+            writer.WriteEndElement();
+        }
+
+        writer.WriteEndElement();
+        writer.WriteEndDocument();
+    }
+}
