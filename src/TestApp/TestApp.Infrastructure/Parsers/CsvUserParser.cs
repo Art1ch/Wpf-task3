@@ -13,6 +13,8 @@ public class CsvUserParser : IUserParser
     private readonly ILogger<CsvUserParser> _logger;
     private readonly CsvConfiguration _config;
 
+    public string FileExtension { get; } = ".csv";
+
     public CsvUserParser(ILogger<CsvUserParser> logger)
     {
         _logger = logger;

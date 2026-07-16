@@ -4,15 +4,15 @@ using TestApp.Core.Models;
 
 namespace TestApp.Infrastructure.Exporters;
 
-internal sealed class XmlExporter : IUserExporter
+internal sealed class XmlUserExporter : IUserExporter
 {
-    public string ExporterName { get; set; } = "Xml exporter";
-    public string FileExtension { get; set; } = ".xml";
+    public string ExporterName { get; } = "Xml exporter";
+    public string FileExtension { get; } = ".xml";
 
     public void Export(IEnumerable<UserExportModel> users, string filePath)
     {
         if (users == null || !users.Any())
-            throw new ArgumentException("Not data for export");
+            throw new ArgumentException("No data for export");
 
         var settings = new XmlWriterSettings
         {

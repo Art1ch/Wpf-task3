@@ -4,7 +4,7 @@ namespace TestApp.Application.Abstractions;
 
 public interface IUserExporter
 {
-    public string ExporterName { get; set; }
-    public string FileExtension { get; set; }
+    public string ExporterName { get; }
+    public string FileExtension { get; }
     void Export(IEnumerable<UserExportModel> users, string filePath);
 }

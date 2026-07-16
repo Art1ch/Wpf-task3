@@ -4,6 +4,7 @@ namespace TestApp.Application.Abstractions;
 
 public interface IUserParser
 {
+    public string FileExtension { get; }
     bool ValidateFile(string filePath);
     IAsyncEnumerable<UserImportModel> ParseInBatchesAsync(
         string filePath,

@@ -4,10 +4,10 @@ using TestApp.Core.Models;
 
 namespace TestApp.Infrastructure.Exporters;
 
-internal sealed class ExcelExporter : IUserExporter
+internal sealed class ExcelUserExporter : IUserExporter
 {
-    public string ExporterName { get; set; } = "Excel exporter";
-    public string FileExtension { get; set; } = ".xlsx";
+    public string ExporterName { get; } = "Excel exporter";
+    public string FileExtension { get; } = ".xlsx";
 
     public void Export(IEnumerable<UserExportModel> users, string filePath)
     {
