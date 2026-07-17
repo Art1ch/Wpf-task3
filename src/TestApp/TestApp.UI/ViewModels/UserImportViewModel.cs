@@ -16,7 +16,7 @@ public partial class UserImportViewModel : ObservableObject
 {
     private readonly IUserRepository _repository;
     private readonly IMapper _mapper;
-    private readonly IFileDialogService _fileDialogService;
+    private readonly IDialogService _dialogService;
     private readonly IMessenger _messenger;
     private readonly IValidator<UserImportModel> _validator;
 
@@ -30,7 +30,7 @@ public partial class UserImportViewModel : ObservableObject
     private string _status = "Ready to import";
 
     [ObservableProperty]
-    private bool _isImporting;
+    private bool _isImporting = false;
 
     [ObservableProperty]
     private int _importedCount;
@@ -41,7 +41,7 @@ public partial class UserImportViewModel : ObservableObject
     public UserImportViewModel(
         IEnumerable<IUserParser> parsers,
         IUserRepository repository,
-        IFileDialogService fileDialogService,
+        IDialogService fileDialogService,
         IMapper mapper,
         IValidator<UserImportModel> validator,
         IMessenger messenger)
@@ -49,7 +49,7 @@ public partial class UserImportViewModel : ObservableObject
         AllUserParsers = parsers;
 
         _repository = repository;
-        _fileDialogService = fileDialogService;
+        _dialogService = fileDialogService;
         _mapper = mapper;
         _validator = validator;
         _messenger = messenger;
@@ -58,14 +58,9 @@ public partial class UserImportViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private async Task ImportAsync()
+    public async Task Import()
     {
-
-        var filePath = _fileDialogService.GetFilePath(SelectedUserParser.FileExtension, "Select file");
-
-        if (filePath == null) return;
-
-        SelectedFilePath = filePath;
+        if (string.IsNullOrEmpty(SelectedFilePath)) return;
 
         if (!SelectedUserParser.ValidateFile(SelectedFilePath))
         {
@@ -115,12 +110,22 @@ public partial class UserImportViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            Status = $"Error: {ex.Message}";
-            MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            Status = $"Error while parsing the file";
+            _messenger.Send(new ShowErrorMessage($"Error {ex.Message}"));
         }
         finally
         {
             IsImporting = false;
         }
+    }
+
+    [RelayCommand]
+    public async Task ChooseFilePath()
+    {
+        var filePath = _dialogService.GetFilePath(SelectedUserParser.FileExtension, "Select file");
+
+        if (filePath == null) return;
+
+        SelectedFilePath = filePath;
     }
 }

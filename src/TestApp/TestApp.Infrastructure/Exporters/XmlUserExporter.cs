@@ -6,7 +6,7 @@ namespace TestApp.Infrastructure.Exporters;
 
 internal sealed class XmlUserExporter : IUserExporter
 {
-    public string ExporterName { get; } = "Xml exporter";
+    public string Name { get; } = "Xml exporter";
     public string FileExtension { get; } = ".xml";
 
     public void Export(IEnumerable<UserExportModel> users, string filePath)

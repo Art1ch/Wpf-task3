@@ -13,7 +13,9 @@ public class CsvUserParser : IUserParser
     private readonly ILogger<CsvUserParser> _logger;
     private readonly CsvConfiguration _config;
 
+    public string Name { get; } = "Csv parser";
     public string FileExtension { get; } = ".csv";
+
 
     public CsvUserParser(ILogger<CsvUserParser> logger)
     {
@@ -21,7 +23,7 @@ public class CsvUserParser : IUserParser
 
         _config = new(CultureInfo.InvariantCulture)
         {
-            HasHeaderRecord = true,
+            HasHeaderRecord = false,
             Delimiter = ";",
             TrimOptions = TrimOptions.Trim,
             IgnoreBlankLines = true,
@@ -32,10 +34,16 @@ public class CsvUserParser : IUserParser
 
     public bool ValidateFile(string filePath)
     {
-        return !string.IsNullOrWhiteSpace(filePath) &&
-               File.Exists(filePath) &&
-               Path.GetExtension(filePath).Equals(".csv", StringComparison.OrdinalIgnoreCase) &&
-               new FileInfo(filePath).Length > 0;
+        if (string.IsNullOrWhiteSpace(filePath)) return false;
+
+        filePath = filePath.Trim();
+
+        if (!File.Exists(filePath)) return false;
+
+        var extension = Path.GetExtension(filePath);
+        if (!extension.Equals(".csv", StringComparison.OrdinalIgnoreCase)) return false;
+
+        return true;
     }
 
     public async IAsyncEnumerable<UserImportModel> ParseInBatchesAsync(
@@ -48,9 +56,6 @@ public class CsvUserParser : IUserParser
         using var csv = new CsvReader(reader, _config);
 
         var batch = new List<UserImportModel>(batchSize);
-
-        await csv.ReadAsync();
-        csv.ReadHeader();
 
         while (await csv.ReadAsync())
         {

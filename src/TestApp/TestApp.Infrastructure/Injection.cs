@@ -34,4 +34,12 @@ public static class Injection
             .AddTransient<IUserExporter, ExcelUserExporter>()
             .AddTransient<IUserExporter, XmlUserExporter>();
 
+    public static void InitializeDatabase(this IServiceProvider serviceProvider)
+    {
+        using (var scope = serviceProvider.CreateScope())
+        {
+            var dbContext = scope.ServiceProvider.GetRequiredService<UserContext>();
+            dbContext.Database.EnsureCreated();
+        }
+    }
 }

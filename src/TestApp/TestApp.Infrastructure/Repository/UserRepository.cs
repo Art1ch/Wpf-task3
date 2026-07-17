@@ -1,6 +1,7 @@
 ﻿using EFCore.BulkExtensions;
 using Microsoft.EntityFrameworkCore;
 using TestApp.Application.Abstractions;
+using TestApp.Application.Filters;
 using TestApp.Core.Entities;
 using TestApp.Infrastructure.Context;
 
@@ -44,8 +45,39 @@ internal sealed class UserRepository : IUserRepository
         await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task GetUserByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<UserEntity> GetUserByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        await _context.Users.FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+        return user!;
+    }
+
+    public async Task<IEnumerable<UserEntity>> GetUsersByFilterAsync(UserFilter filter, CancellationToken cancellationToken = default)
+    {
+        var query = _context.Users.AsNoTracking();
+
+        if (!string.IsNullOrEmpty(filter.FirstName))
+            query.Where(x => x.FirstName == filter.FirstName);
+
+        if (!string.IsNullOrEmpty(filter.LastName))
+            query.Where(x => x.LastName == filter.LastName);
+
+        if (!string.IsNullOrEmpty(filter.MiddleName))
+            query.Where(x => x.MiddleName == filter.MiddleName);
+
+        if (filter.DataCollectedDateFrom != null)
+            query.Where(x => x.DataCollectedDate >= filter.DataCollectedDateFrom);
+
+        if (filter.DataCollectedDateTo != null)
+            query.Where(x => x.DataCollectedDate <= filter.DataCollectedDateTo);
+
+        if (!string.IsNullOrEmpty(filter.Country))
+            query.Where(x => x.Country == filter.Country);
+
+        if (!string.IsNullOrEmpty(filter.City))
+            query.Where(x => x.City == filter.City);
+
+        var users = await query.ToListAsync(cancellationToken);
+
+        return users;
     }
 }

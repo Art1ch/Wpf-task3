@@ -5,8 +5,109 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TestApp.UI.Views"
         mc:Ignorable="d"
-        Title="UserExportWindow" Height="450" Width="800">
-    <Grid>
-        
+        Title="UserExportWindow" Height="205" Width="400">
+
+    <Grid Margin="15">
+    <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+    <Grid Grid.Row="0" Margin="0,0,0,8">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Column="0" Text="Exporter:" VerticalAlignment="Center" MinWidth="60"/>
+        <ComboBox Grid.Column="1" 
+                      ItemsSource="{Binding AllUserExporters}"
+                      SelectedItem="{Binding SelectedUserExporter}"
+                      DisplayMemberPath="Name">
+            <ComboBox.Style>
+                <Style TargetType="ComboBox">
+                    <Setter Property="IsEnabled" Value="True"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsExporting}" Value="True">
+                            <Setter Property="IsEnabled" Value="False"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ComboBox.Style>
+        </ComboBox>
+    </Grid>
+
+    <Grid Grid.Row="1" Margin="0,0,0,8">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Column="0" Text="Folder:" VerticalAlignment="Center" MinWidth="60"/>
+        <TextBox Grid.Column="1" 
+                     Text="{Binding SelectedFolderPath}" 
+                     IsReadOnly="True"
+                     VerticalAlignment="Center"
+                     Margin="0,0,5,0"/>
+        <Button Grid.Column="2" 
+                    Content="Browse..."
+                    Command="{Binding ChooseFolderPathCommand}"
+                    Padding="10,5">
+            <Button.Style>
+                <Style TargetType="Button">
+                    <Setter Property="IsEnabled" Value="True"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsExporting}" Value="True">
+                            <Setter Property="IsEnabled" Value="False"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
+    </Grid>
+
+        <Grid Grid.Row="2" Margin="0,5,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0" Text="Status:" VerticalAlignment="Center"/>
+            <TextBlock Grid.Column="1" 
+               Text="{Binding Status}" 
+               VerticalAlignment="Center"
+               Margin="10,0,0,0"/>
+        </Grid>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="10,10,10,10">
+            <Button Content="Export" 
+                Command="{Binding ExportCommand}"
+                Padding="30,8"> 
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="IsEnabled" Value="True"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsExporting}" Value="True">
+                                <Setter Property="IsEnabled" Value="False"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding SelectedFolderPath}" Value="{x:Null}">
+                                <Setter Property="IsEnabled" Value="False"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding SelectedFolderPath}" Value="">
+                                <Setter Property="IsEnabled" Value="False"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding SelectedUserExporter}" Value="{x:Null}">
+                                <Setter Property="IsEnabled" Value="False"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+        </StackPanel>
+
+
     </Grid>
 </Window>

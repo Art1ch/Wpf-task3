@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
 using TestApp.UI.Messages;
 using TestApp.UI.ViewModels;
@@ -7,38 +8,40 @@ namespace TestApp.UI.Views;
 
 public partial class MainWindow : Window
 {
-    private readonly UserImportWindow _userImportWindow;
-    private readonly UserExportWindow _userExportWindow;
+    private readonly IServiceProvider _serviceProvider;
 
     public MainWindow(
         MainViewModel mainViewModel,
-        UserImportWindow userImportWindow,
-        UserExportWindow userExportWindow
+        IServiceProvider serviceProvider
     )
     {
         InitializeComponent();
         DataContext = mainViewModel;
 
-        _userImportWindow = userImportWindow;
-        _userExportWindow = userExportWindow;
+        _serviceProvider = serviceProvider;
 
-        ConfigureMessageHandler<OpenUserImportWindowMessage, UserImportWindow>(_userImportWindow);
-        ConfigureMessageHandler<OpenUserExportWindowMessage, UserExportWindow>(_userExportWindow);
+        WeakReferenceMessenger.Default.Register<OpenUserImportWindowMessage>(this, OnOpenImportWindow);
+        WeakReferenceMessenger.Default.Register<OpenUserExportWindowMessage>(this, OnOpenExportWindow);
     }
 
-    private void ConfigureMessageHandler<TMessage, TWindow>(
-        TWindow window
-    ) 
-        where TWindow : Window
-        where TMessage : class
+    private void OnOpenImportWindow(object recipient, OpenUserImportWindowMessage message)
     {
-        WeakReferenceMessenger.Default.Register<TMessage>(
-            this,
-            (_, _) =>
-            {
-                window.Owner = this;
-                window.ShowDialog();
-            }
-        );
+        var window = _serviceProvider.GetRequiredService<UserImportWindow>();
+        window.Owner = this;
+        window.ShowDialog();
+    }
+
+    private void OnOpenExportWindow(object recipient, OpenUserExportWindowMessage message)
+    {
+        var window = _serviceProvider.GetRequiredService<UserExportWindow>();
+        window.Owner = this;
+        window.ShowDialog();
+    }
+
+    protected override void OnClosed(EventArgs e)
+    {
+        WeakReferenceMessenger.Default.Unregister<OpenUserImportWindowMessage>(this);
+        WeakReferenceMessenger.Default.Unregister<OpenUserExportWindowMessage>(this);
+        base.OnClosed(e);
     }
 }
