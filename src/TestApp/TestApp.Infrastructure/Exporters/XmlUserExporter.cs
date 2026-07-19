@@ -9,7 +9,7 @@ internal sealed class XmlUserExporter : IUserExporter
     public string Name { get; } = "Xml exporter";
     public string FileExtension { get; } = ".xml";
 
-    public void Export(IEnumerable<UserExportModel> users, string filePath)
+    public void Export(IEnumerable<UserExportModel> users, string folderPath)
     {
         if (users == null || !users.Any())
             throw new ArgumentException("No data for export");
@@ -22,6 +22,12 @@ internal sealed class XmlUserExporter : IUserExporter
             OmitXmlDeclaration = false
         };
 
+        Directory.CreateDirectory(folderPath);
+
+        var fileName = $"Users_{DateTime.Now:yyyyMMdd_HHmmss}{FileExtension}";
+
+        var filePath = Path.Combine(folderPath, fileName);
+
         using var writer = XmlWriter.Create(filePath, settings);
 
         writer.WriteStartDocument();
@@ -33,7 +39,7 @@ internal sealed class XmlUserExporter : IUserExporter
 
             writer.WriteAttributeString("id", user.Id.ToString());
 
-            writer.WriteElementString("Date", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            writer.WriteElementString("DataCollectedDate", user.DataCollectedDate.ToShortDateString() ?? string.Empty);
             writer.WriteElementString("FirstName", user.FirstName ?? string.Empty);
             writer.WriteElementString("LastName", user.LastName ?? string.Empty);
             writer.WriteElementString("MiddleName", user.MiddleName ?? string.Empty);

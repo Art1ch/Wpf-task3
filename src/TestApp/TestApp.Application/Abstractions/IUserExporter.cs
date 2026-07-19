@@ -6,5 +6,5 @@ public interface IUserExporter
 {
     public string Name { get; }
     public string FileExtension { get; }
-    void Export(IEnumerable<UserExportModel> users, string filePath);
+    void Export(IEnumerable<UserExportModel> users, string folderPath);
 }

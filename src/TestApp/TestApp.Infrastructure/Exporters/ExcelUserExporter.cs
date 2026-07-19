@@ -9,10 +9,12 @@ internal sealed class ExcelUserExporter : IUserExporter
     public string Name { get; } = "Excel exporter";
     public string FileExtension { get; } = ".xlsx";
 
-    public void Export(IEnumerable<UserExportModel> users, string filePath)
+    public void Export(IEnumerable<UserExportModel> users, string folderPath)
     {
         if (users == null || !users.Any())
             throw new ArgumentException("No data for export");
+
+        Directory.CreateDirectory(folderPath);
 
         using var workbook = new XLWorkbook();
         var worksheet = workbook.Worksheets.Add("Users");
@@ -29,17 +31,21 @@ internal sealed class ExcelUserExporter : IUserExporter
             worksheet.Cell(row, 4).Value = user.MiddleName;
             worksheet.Cell(row, 5).Value = user.City;
             worksheet.Cell(row, 6).Value = user.Country;
+            worksheet.Cell(row, 7).Value = user.DataCollectedDate.ToShortDateString();
             row++;
         }
 
         worksheet.Columns().AdjustToContents();
+
+        var fileName = $"Users_{DateTime.Now:yyyyMMdd_HHmmss}{FileExtension}";
+        var filePath = Path.Combine(folderPath, fileName);
 
         workbook.SaveAs(filePath);
     }
 
     private void SetupHeaders(IXLWorksheet worksheet)
     {
-        string[] headers = { "Id", "First name", "Last name", "Middle name", "City", "Country" };
+        string[] headers = { "Id", "First name", "Last name", "Middle name", "City", "Country", "Data collected date" };
         for (int i = 0; i < headers.Length; i++)
         {
             var cell = worksheet.Cell(1, i + 1);

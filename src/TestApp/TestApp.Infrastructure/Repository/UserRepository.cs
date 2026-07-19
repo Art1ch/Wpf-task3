@@ -56,25 +56,25 @@ internal sealed class UserRepository : IUserRepository
         var query = _context.Users.AsNoTracking();
 
         if (!string.IsNullOrEmpty(filter.FirstName))
-            query.Where(x => x.FirstName == filter.FirstName);
+            query = query.Where(x => x.FirstName == filter.FirstName);
 
         if (!string.IsNullOrEmpty(filter.LastName))
-            query.Where(x => x.LastName == filter.LastName);
+            query = query.Where(x => x.LastName == filter.LastName);
 
         if (!string.IsNullOrEmpty(filter.MiddleName))
-            query.Where(x => x.MiddleName == filter.MiddleName);
+            query = query.Where(x => x.MiddleName == filter.MiddleName);
 
         if (filter.DataCollectedDateFrom != null)
-            query.Where(x => x.DataCollectedDate >= filter.DataCollectedDateFrom);
+            query = query.Where(x => x.DataCollectedDate >= filter.DataCollectedDateFrom);
 
         if (filter.DataCollectedDateTo != null)
-            query.Where(x => x.DataCollectedDate <= filter.DataCollectedDateTo);
+            query = query.Where(x => x.DataCollectedDate <= filter.DataCollectedDateTo);
 
         if (!string.IsNullOrEmpty(filter.Country))
-            query.Where(x => x.Country == filter.Country);
+            query = query.Where(x => x.Country == filter.Country);
 
         if (!string.IsNullOrEmpty(filter.City))
-            query.Where(x => x.City == filter.City);
+            query = query.Where(x => x.City == filter.City);
 
         var users = await query.ToListAsync(cancellationToken);
 

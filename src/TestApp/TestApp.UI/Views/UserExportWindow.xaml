@@ -4,110 +4,210 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TestApp.UI.Views"
+        xmlns:converters="clr-namespace:TestApp.UI.Converters"
         mc:Ignorable="d"
-        Title="UserExportWindow" Height="205" Width="400">
+        Title="Export" Height="450" Width="500" ResizeMode="NoResize">
 
-    <Grid Margin="15">
-    <Grid.RowDefinitions>
-        <RowDefinition Height="Auto"/>
-        <RowDefinition Height="Auto"/>
-        <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+    <Window.Resources>
+        <converters:DateOnlyConverter x:Key="DateOnlyConverter"/>
+    </Window.Resources>
 
-    <Grid Grid.Row="0" Margin="0,0,0,8">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Margin="15">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
 
-        <TextBlock Grid.Column="0" Text="Exporter:" VerticalAlignment="Center" MinWidth="60"/>
-        <ComboBox Grid.Column="1" 
-                      ItemsSource="{Binding AllUserExporters}"
-                      SelectedItem="{Binding SelectedUserExporter}"
-                      DisplayMemberPath="Name">
-            <ComboBox.Style>
-                <Style TargetType="ComboBox">
-                    <Setter Property="IsEnabled" Value="True"/>
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsExporting}" Value="True">
-                            <Setter Property="IsEnabled" Value="False"/>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </ComboBox.Style>
-        </ComboBox>
-    </Grid>
+            </Grid.RowDefinitions>
 
-    <Grid Grid.Row="1" Margin="0,0,0,8">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto"/>
-        </Grid.ColumnDefinitions>
+            <Grid Grid.Row="0" Margin="0,0,0,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.Column="0" Text="Folder:" VerticalAlignment="Center" MinWidth="60"/>
-        <TextBox Grid.Column="1" 
-                     Text="{Binding SelectedFolderPath}" 
-                     IsReadOnly="True"
-                     VerticalAlignment="Center"
-                     Margin="0,0,5,0"/>
-        <Button Grid.Column="2" 
-                    Content="Browse..."
-                    Command="{Binding ChooseFolderPathCommand}"
-                    Padding="10,5">
-            <Button.Style>
-                <Style TargetType="Button">
-                    <Setter Property="IsEnabled" Value="True"/>
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsExporting}" Value="True">
-                            <Setter Property="IsEnabled" Value="False"/>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Button.Style>
-        </Button>
-    </Grid>
+                <TextBlock Grid.Column="0" Text="Exporter:" VerticalAlignment="Center" MinWidth="80"/>
+                <ComboBox Grid.Column="1" 
+                          ItemsSource="{Binding AllUserExporters}"
+                          SelectedItem="{Binding SelectedUserExporter}"
+                          DisplayMemberPath="Name">
+                    <ComboBox.Style>
+                        <Style TargetType="ComboBox">
+                            <Setter Property="IsEnabled" Value="True"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsExporting}" Value="True">
+                                    <Setter Property="IsEnabled" Value="False"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ComboBox.Style>
+                </ComboBox>
+            </Grid>
 
-        <Grid Grid.Row="2" Margin="0,5,0,0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+            <Grid Grid.Row="1" Margin="0,0,0,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Column="0" Text="Status:" VerticalAlignment="Center"/>
-            <TextBlock Grid.Column="1" 
-               Text="{Binding Status}" 
-               VerticalAlignment="Center"
-               Margin="10,0,0,0"/>
+                <TextBlock Grid.Column="0" Text="Folder:" VerticalAlignment="Center" MinWidth="80"/>
+                <TextBox Grid.Column="1" 
+                         Text="{Binding SelectedFolderPath}" 
+                         IsReadOnly="True"
+                         VerticalAlignment="Center"
+                         Margin="0,0,5,0"/>
+                <Button Grid.Column="2" 
+                        Content="Browse..."
+                        Command="{Binding ChooseFolderPathCommand}"
+                        Padding="10,5">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="IsEnabled" Value="True"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsExporting}" Value="True">
+                                    <Setter Property="IsEnabled" Value="False"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </Grid>
+
+            <Separator Grid.Row="2" Margin="0,10,0,10"/>
+
+            <TextBlock Grid.Row="3" Text="Filters" FontWeight="Bold" FontSize="14" Margin="0,0,0,10"/>
+
+            <Grid Grid.Row="4" Margin="0,0,0,5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="First Name:" VerticalAlignment="Center" MinWidth="80"/>
+                <TextBox Grid.Column="1" 
+                         Text="{Binding UserFilter.FirstName}"
+                         VerticalAlignment="Center"/>
+            </Grid>
+
+            <Grid Grid.Row="5" Margin="0,0,0,5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="Last Name:" VerticalAlignment="Center" MinWidth="80"/>
+                <TextBox Grid.Column="1" 
+                         Text="{Binding UserFilter.LastName}"
+                         VerticalAlignment="Center"/>
+            </Grid>
+
+            <Grid Grid.Row="6" Margin="0,0,0,5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="Middle Name:" VerticalAlignment="Center" MinWidth="80"/>
+                <TextBox Grid.Column="1" 
+                         Text="{Binding UserFilter.MiddleName}"
+                         VerticalAlignment="Center"/>
+            </Grid>
+
+            <Grid Grid.Row="7" Margin="0,0,0,5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="Country:" VerticalAlignment="Center" MinWidth="80"/>
+                <TextBox Grid.Column="1" 
+                         Text="{Binding UserFilter.Country}"
+                         VerticalAlignment="Center"/>
+            </Grid>
+
+            <Grid Grid.Row="8" Margin="0,0,0,5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="City:" VerticalAlignment="Center" MinWidth="80"/>
+                <TextBox Grid.Column="1" 
+                         Text="{Binding UserFilter.City}"
+                         VerticalAlignment="Center"/>
+            </Grid>
+
+            <Grid Grid.Row="9" Margin="0,0,0,5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="Date from:" VerticalAlignment="Center" MinWidth="80"/>
+                <DatePicker Grid.Column="1" 
+                            SelectedDate="{Binding UserFilter.DataCollectedDateFrom, Converter={StaticResource DateOnlyConverter}}"
+                            VerticalAlignment="Center"
+                            Margin="0,0,5,0"/>
+
+                <TextBlock Grid.Column="2" Text="to:" VerticalAlignment="Center" MinWidth="40"/>
+                <DatePicker Grid.Column="3" 
+                            SelectedDate="{Binding UserFilter.DataCollectedDateTo, Converter={StaticResource DateOnlyConverter}}"
+                            VerticalAlignment="Center"
+                            Margin="0,0,5,0"/>
+            </Grid>
+
+            <Separator Grid.Row="10" Margin="0,10,0,10"/>
+
+            <Grid Grid.Row="11" Margin="0,5,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="Status:" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="1" 
+                           Text="{Binding Status}" 
+                           VerticalAlignment="Center"
+                           Margin="10,0,0,0"/>
+            </Grid>
+
+            <StackPanel Grid.Row="12" Orientation="Horizontal" Margin="10,10,10,10" HorizontalAlignment="Center">
+                <Button Content="Export" 
+                        Command="{Binding ExportCommand}"
+                        Padding="30,8">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="IsEnabled" Value="True"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsExporting}" Value="True">
+                                    <Setter Property="IsEnabled" Value="False"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding SelectedFolderPath}" Value="{x:Null}">
+                                    <Setter Property="IsEnabled" Value="False"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding SelectedFolderPath}" Value="">
+                                    <Setter Property="IsEnabled" Value="False"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </StackPanel>
+
         </Grid>
-
-        <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="10,10,10,10">
-            <Button Content="Export" 
-                Command="{Binding ExportCommand}"
-                Padding="30,8"> 
-                <Button.Style>
-                    <Style TargetType="Button">
-                        <Setter Property="IsEnabled" Value="True"/>
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsExporting}" Value="True">
-                                <Setter Property="IsEnabled" Value="False"/>
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding SelectedFolderPath}" Value="{x:Null}">
-                                <Setter Property="IsEnabled" Value="False"/>
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding SelectedFolderPath}" Value="">
-                                <Setter Property="IsEnabled" Value="False"/>
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding SelectedUserExporter}" Value="{x:Null}">
-                                <Setter Property="IsEnabled" Value="False"/>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Button.Style>
-            </Button>
-        </StackPanel>
-
-
-    </Grid>
+    </ScrollViewer>
 </Window>
