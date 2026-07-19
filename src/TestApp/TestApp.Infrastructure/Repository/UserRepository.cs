@@ -16,9 +16,17 @@ internal sealed class UserRepository : IUserRepository
         _context = context;
     }
 
-    public async Task InsertBulkOfUsersAsync(IEnumerable<UserEntity> users, CancellationToken cancellationToken = default)
+    public async Task InsertBulkOfUsersAsync(IEnumerable<UserEntity> users, int batchSize, CancellationToken cancellationToken = default)
     {
-        await _context.BulkInsertAsync(users, cancellationToken : cancellationToken);
+        var config = new BulkConfig
+        {
+            SetOutputIdentity = false,
+            BatchSize = batchSize,
+            UseTempDB = false,
+            TrackingEntities = false
+        };
+
+        await _context.BulkInsertAsync(users, config, cancellationToken : cancellationToken);
     }
 
     public async Task CreateUserAsync(UserEntity user, CancellationToken cancellationToken = default)

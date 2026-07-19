@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FluentValidation;
 using MapsterMapper;
-using System.Windows;
 using TestApp.Application.Abstractions;
 using TestApp.Core.Entities;
 using TestApp.Core.Models;
@@ -74,36 +73,27 @@ public partial class UserImportViewModel : ObservableObject
 
         try
         {
-            var batchSize = 1000;
-            var batchReadCount = 0;
+            var batchSize = 10000;
 
-            var userList = new List<UserEntity>(batchSize);
-
-            await foreach (var userModel in SelectedUserParser.ParseInBatchesAsync(SelectedFilePath, batchSize))
+            await foreach (var batch in SelectedUserParser.ParseInBatchesAsync(SelectedFilePath, batchSize))
             {
-                if (batchReadCount >= 1000)
+                var userModels = new List<UserImportModel>(batchSize);
+
+                foreach (var model in batch)
                 {
-                    await _repository.InsertBulkOfUsersAsync(userList);
+                    if (!_validator.Validate(model).IsValid)
+                        continue;
 
-                    ImportedCount += userList.Count;
-                    batchReadCount = 0;
-
-                    userList.Clear();
+                    userModels.Add(model);
                 }
 
-                batchReadCount++;
+                if (userModels.Count == 0)
+                    continue;
 
-                if (_validator.Validate(userModel).IsValid)
-                {
-                    var userEntity = _mapper.Map<UserEntity>(userModel);
-                    userList.Add(userEntity);
-                }
-            }
+                var userToBulk = _mapper.Map<List<UserEntity>>(userModels);
+                await _repository.InsertBulkOfUsersAsync(userToBulk, userToBulk.Count);
 
-            if (userList.Count > 0)
-            {
-                await _repository.InsertBulkOfUsersAsync(userList);
-                ImportedCount += userList.Count;
+                ImportedCount += userToBulk.Count;
             }
 
             Status = $"Import completed: {ImportedCount} users";

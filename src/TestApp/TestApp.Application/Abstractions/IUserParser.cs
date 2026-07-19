@@ -7,9 +7,9 @@ public interface IUserParser
     public string Name { get; }
     public string FileExtension { get; }
     bool ValidateFile(string filePath);
-    IAsyncEnumerable<UserImportModel> ParseInBatchesAsync(
+    IAsyncEnumerable<IReadOnlyList<UserImportModel>> ParseInBatchesAsync(
         string filePath,
-        int batchSize = 1000,
+        int batchSize,
         CancellationToken cancellationToken = default
     );
 }

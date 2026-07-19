@@ -46,10 +46,10 @@ public class CsvUserParser : IUserParser
         return true;
     }
 
-    public async IAsyncEnumerable<UserImportModel> ParseInBatchesAsync(
-        string filePath,
-        int batchSize = 1000,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<IReadOnlyList<UserImportModel>> ParseInBatchesAsync(
+    string filePath,
+    int batchSize,
+    [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         using var stream = File.OpenRead(filePath);
         using var reader = new StreamReader(stream);
@@ -61,39 +61,41 @@ public class CsvUserParser : IUserParser
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (batch.Count >= batchSize)
-            {
-                foreach (var item in batch)
-                    yield return item;
-
-                batch.Clear();
-            }
-
-            if (batch.Count > 0)
-            {
-                foreach (var item in batch)
-                    yield return item;
-            }
+            UserImportModel? model = null;
 
             try
             {
-                var model = new UserImportModel
+                model = new UserImportModel
                 {
                     DataCollectedDate = DateOnly.Parse(csv.GetField(0)!),
                     FirstName = csv.GetField(1) ?? string.Empty,
                     LastName = csv.GetField(2) ?? string.Empty,
                     MiddleName = csv.GetField(3) ?? string.Empty,
                     City = csv.GetField(4) ?? string.Empty,
-                    Country = csv.GetField(5) ?? string.Empty,
+                    Country = csv.GetField(5) ?? string.Empty
                 };
-
-                batch.Add(model);
             }
-
             catch (Exception ex)
             {
-                _logger.LogError(ex, ex.Message);
+                _logger.LogWarning(ex, "Failed to parse CSV row {Row}", csv.Parser.Row);
             }
+
+            if (model is null)
+                continue;
+
+            batch.Add(model);
+
+            if (batch.Count >= batchSize)
+            {
+                yield return batch;
+
+                batch = new List<UserImportModel>(batchSize);
+            }
+        }
+
+        if (batch.Count > 0)
+        {
+            yield return batch;
         }
     }
 }
