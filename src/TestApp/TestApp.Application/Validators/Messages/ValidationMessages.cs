@@ -12,11 +12,20 @@ public static class ValidationMessages
         $"{fieldName} cannot exceed {max} characters";
 
     public static string Range(string fieldName, int min, int max) =>
-        $"{fieldName} must be between {min} and {max}";
+        $"{fieldName} must be between {min} and {max} characters";
 
     public static string MatchesRegex(string fieldName) =>
-        $"{fieldName} must be written in letters";
+        $"{fieldName} must contain only letters, hyphens, and spaces";
 
     public static string InvalidDate(string fieldName) =>
-        $"{fieldName} must be written in letters";
+        $"{fieldName} cannot be in the future";
+
+    public static string GreaterThanOrEqual(string fieldName, int value) =>
+        $"{fieldName} must be at least {value}";
+
+    public static string LessThanOrEqual(string fieldName, int value) =>
+        $"{fieldName} cannot exceed {value}";
+
+    public static string DateRangeInvalid(string fromField, string toField) =>
+        $"'{fromField}' must be before or equal to '{toField}'";
 }

@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using FluentValidation;
 using MapsterMapper;
 using Microsoft.Extensions.Logging;
 using TestApp.Application.Abstractions;
@@ -17,6 +18,7 @@ public partial class UserExportViewModel : ObservableObject
     private readonly IMapper _mapper;
     private readonly IDialogService _dialogService;
     private readonly IMessenger _messenger;
+    private readonly IValidator<UserFilter> _validator;
     private readonly ILogger<UserExportViewModel> _logger;
 
     [ObservableProperty]
@@ -46,15 +48,11 @@ public partial class UserExportViewModel : ObservableObject
         IMapper mapper,
         IDialogService dialogService,
         IMessenger messenger,
-        ILogger<UserExportViewModel> logger)
+        ILogger<UserExportViewModel> logger,
+        IValidator<UserFilter> validator
+    )
     {
         var exportersList = allUserExporters.ToList();
-        logger.LogInformation($"Received {exportersList.Count} exporters");
-
-        foreach (var exporter in exportersList)
-        {
-            logger.LogInformation($"Exporter: {exporter.GetType().Name}, Name: {exporter.Name}");
-        }
 
         AllUserExporters = allUserExporters;
 
@@ -65,15 +63,27 @@ public partial class UserExportViewModel : ObservableObject
 
         SelectedUserExporter = allUserExporters.FirstOrDefault()!;
         _logger = logger;
+        _validator = validator;
     }
 
     [RelayCommand]
     public async Task Export()
     {
-        if (string.IsNullOrEmpty(SelectedFolderPath)) return;
+        if (string.IsNullOrWhiteSpace(SelectedFolderPath))
+            return;
 
         IsExporting = true;
         Status = "Exporting...";
+
+        var validationResult = _validator.Validate(UserFilter);
+
+        if (!validationResult.IsValid)
+        {
+            foreach (var error in validationResult.Errors)
+                _messenger.Send(new ShowErrorMessage(error.ErrorMessage));
+
+            return;
+        }
 
         var usersEntitiesToExport = await _repository.GetUsersByFilterAsync(UserFilter);
 

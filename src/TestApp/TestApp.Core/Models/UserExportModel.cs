@@ -1,6 +1,6 @@
 ﻿namespace TestApp.Core.Models;
 
-public sealed class UserExportModel
+public struct UserExportModel
 {
     public Guid Id { get; set; }
     public string FirstName { get; set; }

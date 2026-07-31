@@ -1,11 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using MahApps.Metro.Controls;
 using System.Windows;
 using TestApp.UI.Messages;
 using TestApp.UI.ViewModels;
 
 namespace TestApp.UI.Views;
 
-public partial class UserExportWindow : Window
+public partial class UserExportWindow : MetroWindow
 {
     public UserExportWindow(UserExportViewModel userExportViewModel)
     {

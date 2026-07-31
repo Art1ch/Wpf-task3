@@ -63,13 +63,13 @@ internal sealed class UserRepository : IUserRepository
     {
         var query = _context.Users.AsNoTracking();
 
-        if (!string.IsNullOrEmpty(filter.FirstName))
+        if (!string.IsNullOrWhiteSpace(filter.FirstName))
             query = query.Where(x => x.FirstName == filter.FirstName);
 
-        if (!string.IsNullOrEmpty(filter.LastName))
+        if (!string.IsNullOrWhiteSpace(filter.LastName))
             query = query.Where(x => x.LastName == filter.LastName);
 
-        if (!string.IsNullOrEmpty(filter.MiddleName))
+        if (!string.IsNullOrWhiteSpace(filter.MiddleName))
             query = query.Where(x => x.MiddleName == filter.MiddleName);
 
         if (filter.DataCollectedDateFrom != null)
@@ -78,13 +78,16 @@ internal sealed class UserRepository : IUserRepository
         if (filter.DataCollectedDateTo != null)
             query = query.Where(x => x.DataCollectedDate <= filter.DataCollectedDateTo);
 
-        if (!string.IsNullOrEmpty(filter.Country))
+        if (!string.IsNullOrWhiteSpace(filter.Country))
             query = query.Where(x => x.Country == filter.Country);
 
-        if (!string.IsNullOrEmpty(filter.City))
+        if (!string.IsNullOrWhiteSpace(filter.City))
             query = query.Where(x => x.City == filter.City);
 
-        var users = await query.ToListAsync(cancellationToken);
+        var users = await query
+            .Skip((filter.Page - 1) * filter.PageSize)
+            .Take(filter.PageSize)
+            .ToListAsync(cancellationToken);
 
         return users;
     }

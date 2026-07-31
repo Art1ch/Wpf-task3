@@ -1,12 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using MahApps.Metro.Controls;
 using Microsoft.Extensions.DependencyInjection;
-using System.Windows;
 using TestApp.UI.Messages;
 using TestApp.UI.ViewModels;
 
 namespace TestApp.UI.Views;
 
-public partial class MainWindow : Window
+public partial class MainWindow : MetroWindow
 {
     private readonly IServiceProvider _serviceProvider;
 

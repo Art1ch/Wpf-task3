@@ -1,11 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using MahApps.Metro.Controls;
 using System.Windows;
 using TestApp.UI.Messages;
 using TestApp.UI.ViewModels;
 
 namespace TestApp.UI.Views;
 
-public partial class UserImportWindow : Window
+public partial class UserImportWindow : MetroWindow
 {
     public UserImportWindow(UserImportViewModel userImportViewModel)
     {

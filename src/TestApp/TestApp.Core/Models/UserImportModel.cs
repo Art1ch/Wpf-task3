@@ -1,6 +1,6 @@
 ﻿namespace TestApp.Core.Models;
 
-public sealed class UserImportModel
+public struct UserImportModel
 {
     public string FirstName { get; set; }
     public string LastName { get; set; }

@@ -83,7 +83,7 @@ public class CsvUserParser : IUserParser
             if (model is null)
                 continue;
 
-            batch.Add(model);
+            batch.Add((UserImportModel) model);
 
             if (batch.Count >= batchSize)
             {
